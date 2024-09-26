@@ -4,15 +4,11 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-# from django.contrib.auth import authenticate
-# from rest_framework_simplejwt.tokens import RefreshToken
-
 from rest_framework.response import Response
 from .serializer import *
 from .models import *
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .pagination import CustomPagination
 
 
 # @api_view()
@@ -26,11 +22,9 @@ from .pagination import CustomPagination
 def Employees_view(request):
 
     if request.method == "GET":
-        paginator = CustomPagination()
         obj = Employee.objects.all()
-        result_page = paginator.paginate_queryset(queryset=obj, request=request)
-        serializer = EmployeeSerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer = EmployeeSerializer(obj, many=True)
+        return Response({"obj": serializer.data})
     if request.method == "POST":
         data = request.data
         serializer = EmployeeSerializer(data=data)
@@ -40,12 +34,15 @@ def Employees_view(request):
         return Response({"message": "invalid data"})
 
 
+# from django.contrib.auth import authenticate
+# from rest_framework_simplejwt.tokens import RefreshToken
+
 # @api_view(["POST"])
 # def login_api(request):
 #     data = request.data
 #     serializer = LoginSerializer(data=data)
 #     if serializer.is_valid():
-#         username = serializer.data[g"username"]
+#         username = serializer.data["username"]
 #         password = serializer.data["password"]
 
 #         employee = authenticate(username=username, password=password)
